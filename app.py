@@ -50,9 +50,9 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
-        return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
+    
+    //baseurl = "https://query.yahooapis.com/v1/public/yql?"
+       baseurl="https://mdcs0014121431trial.hanatrial.ondemand.com/ChatBotProject/services/wms.xsjs?"
     yql_query = makeYqlQuery(req)
     if yql_query is None:
         return {}
@@ -66,40 +66,23 @@ def processRequest(req):
 def makeYqlQuery(req):
     result = req.get("result")
     parameters = result.get("parameters")
-    city = parameters.get("geo-city")
-    if city is None:
+    taskvalue= parameters.get("taskID")
+    if taskvalue is None:
         return None
 
-    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+    return taskvalue 
 
 
 def makeWebhookResult(data):
-    query = data.get('query')
+    query = data.get('botResponse')
     if query is None:
         return {}
 
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    condition = item.get('condition')
-    if condition is None:
-        return {}
+   return query 
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today the weather in " + location.get('city') + ": " + condition.get('text') + \
-             ", And the temperature is " + condition.get('temp') + " " + units.get('temperature')
+    speech = query
 
     print("Response:")
     print(speech)
